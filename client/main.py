@@ -2,7 +2,7 @@ from interface import Interface
         
 if __name__ == "__main__":
     host = input("Host: ")
-    port = input("Port: ")
+    port = int(input("Port: "))
     client_type = input("Client type (c/h): ")
     
     if client_type == "c":
