@@ -5,7 +5,7 @@ from interface import Interface
 
 class HostClient:
     
-    def __init__(self, interface: Interface) -> None:
+    def __init__(self, interface: Interface, host = "127.0.0.1", port = 16782) -> None:
         
         self.interface = interface
         
@@ -14,7 +14,7 @@ class HostClient:
         self.init = 0
         self.uuid = None
         
-        self.sock = Sock(verbose = True, client_type = "host")
+        self.sock = Sock(host, port, verbose = True, client_type = "host")
 
         self.sock.on_init = self.on_init
         self.sock.on_close = self.on_close

@@ -4,7 +4,7 @@ from sock import Sock
 
 class Client:
     
-    def __init__(self, interface: Interface) -> None:
+    def __init__(self, interface: Interface, host = "127.0.0.1", port = 16782) -> None:
         
         self.init = 0
         self.uuid = None
@@ -13,7 +13,7 @@ class Client:
         self.host = None
         self.current_packet = b""
         
-        self.sock = Sock(verbose = True, client_type = "client")
+        self.sock = Sock(host, port, verbose = True, client_type = "client")
 
         self.sock.on_init = self.on_init
         self.sock.on_close = self.on_close

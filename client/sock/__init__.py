@@ -6,7 +6,7 @@ class Sock:
     
     CHUNK_SIZE = 4096
     
-    def __init__(self, host = '127.0.0.1', port = 8080, verbose = False, client_type = "client"):
+    def __init__(self, host = '127.0.0.1', port = 16782, verbose = False, client_type = "client"):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((host, port))
         
