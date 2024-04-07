@@ -44,8 +44,8 @@ class Client:
             self.send_json(res_data)
             
         elif self.init == 1:
-            self.selected_host = self.init_message['host']
-            self.server.HOSTS[self.selected_host].clients.append(self)
+            self.selected_host = self.server.HOSTS[self.init_message["host"]]
+            self.selected_host.clients.append(self)
             self.init = 2
         
         if self.type == "host":
@@ -55,6 +55,9 @@ class Client:
         for client in self.clients:
             print(".", end="", flush=True)
             client.send(data)
+    
+    def send_to_host(self, data):
+        self.selected_host.send(data)
 
     def _handle(self):
         try:
@@ -66,10 +69,12 @@ class Client:
                 elif self.type == "host":
                     print(":", end="", flush=True)
                     self.send_to_clients(data)
-                    
+                elif self.type == "client":
+                    print("!", end="", flush=True)
+                    self.send_to_host(data)
         except:
             if self.type == "client":
-                self.server.HOSTS[self.selected_host].clients.remove(self)
+                self.selected_host.clients.remove(self)
     
     def handle(self):
         threading.Thread(target=self._handle).start()

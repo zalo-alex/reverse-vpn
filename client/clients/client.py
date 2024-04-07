@@ -1,6 +1,7 @@
 import json
 from interface import Interface
 from sock import Sock
+from utils import handle_packet_chunk, send_packet_to_sock
 
 class Client:
     
@@ -10,6 +11,9 @@ class Client:
         self.uuid = None
         
         self.interface = interface
+        
+        self.interface.on_packet = self.on_packet
+        
         self.host = None
         self.current_packet = b""
         
@@ -34,6 +38,12 @@ class Client:
             "host": self.host
         }) # init = 1
     
+    def on_packet(self, data, raw, timestamp, is_self):
+        if not is_self:
+            return
+        
+        send_packet_to_sock(self.sock, raw)
+        
     def on_init(self):
         self.sock.send_json({
             "type": "client"
@@ -42,10 +52,6 @@ class Client:
     
     def on_close(self):
         print("close")
-    
-    def send_packet(self):
-        self.interface.send(self.current_packet)
-        self.current_packet = b""
     
     def on_message(self, data):
         
@@ -58,17 +64,5 @@ class Client:
             
             self.select_host(init_message["hosts"])
         else:
-            print(".", end="", flush=True)
-            self.data_type = data[0]
-            self.packet = data[1:]
-            
-            if self.data_type == 0: # FULL PACKET
-                self.current_packet = self.packet
-                self.send_packet()
-            elif self.data_type == 1: # PACKET START
-                self.current_packet = self.packet
-            elif self.data_type == 2: # PACKET CONTINUE
-                self.current_packet += self.packet
-            elif self.data_type == 3: # PACKET END
-                self.current_packet += self.packet
-                self.send_packet()
+            print("!", end="", flush=True)
+            handle_packet_chunk(self, data)
